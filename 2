@@ -1,0 +1,48 @@
+#include <rbc.h>
+#include <math.h>
+//5ms=1mm
+float x1,y1 = 0;
+
+void move(float a,int n){
+    setMotorSpeed(motorA, n);
+    setMotorSpeed(motorD, n);
+    delay(a*7.5);
+}
+
+void turn(float d) {
+    if (d >= 0) {
+        setMotorSpeed(motorA, -40);
+        setMotorSpeed(motorD, 40);
+        delay(11 * d);
+    }
+    else{
+        setMotorSpeed(motorA, 40);
+        setMotorSpeed(motorD, -40);
+        delay(11 * -d);
+    }
+
+    //moveCord(
+
+float moveCord(x2, y2){
+        float x1,y1 = 0;
+        float way =  ((x1+x2)*(y1+y2)*(x1+x2+y1+y2))/(sqrtf(x1*x1)+sqrtf(y1*y1)*(sqrtf(x2*x2)+sqrtf(y2*y2)));
+        float tg =
+        atan2f()
+
+
+    }
+
+}
+int main() {
+    /*
+    move(800,60);
+    turn(-60);
+
+    move(400,40);
+    turn(90);
+
+    move(200,80);
+     */
+    move(500,40);
+
+}
