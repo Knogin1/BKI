@@ -1,0 +1,51 @@
+#include <rbc.h>
+#include <math.h>
+
+float x1, r1, cor1 = 0;
+
+void move(float a){
+    setMotorSpeed(motorA, 40);
+    setMotorSpeed(motorD, 40);
+    delay(a*4);
+    setMotorSpeed(motorA, 0);
+    setMotorSpeed(motorD, 0);
+    //delay(100);
+}
+
+void turn(float d) {
+    if (d >= 0) {
+        setMotorSpeed(motorA, -40);
+        setMotorSpeed(motorD, 40);
+        delay(10.45 * d);
+    }
+    else {
+        setMotorSpeed(motorA, 40);
+        setMotorSpeed(motorD, -40);
+        delay(10.45 * -d);
+    }
+}
+
+void moveCord(float x2, float r2){
+    float a = x2 - x1;
+    float b = r2 - r1;
+    float way = sqrt(a * a + b * b);
+    //(atan2f(a, b)
+    float cor2 = ((atan2f(a, b) * 180) / 3.14) - cor1;
+    turn(cor2);
+    move(way);
+    x1 = a;
+    r1 = b;
+    cor1 = cor2;
+}
+
+int main() {
+//Вывести на экран и проверить значения атангенса. причина поломки
+
+    moveCord(-500,-500);
+    moveCord(500,500);
+    moveCord(0,0);
+
+
+
+
+}
