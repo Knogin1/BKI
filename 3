@@ -38,14 +38,45 @@ void moveCord(float x2, float r2){
     cor1 = cor2;
 }
 
-int main() {
-//Вывести на экран и проверить значения атангенса. причина поломки
 
-    moveCord(-500,-500);
-    moveCord(500,500);
-    moveCord(0,0);
-
-
-
-
+void moveEnc(int mm){
+    long e1, e2;
+    e1 = getMotorEncoder(motorA);
+    e2 = getMotorEncoder(motorD);
+    setMotorSpeed(motorA, 17);
+    setMotorSpeed(motorD, 100);
+    float a = ((mm/(3,14*30))*360.0);
+    while(e1 < a){
+        setMotorSpeed(motorA, 0);
+        setMotorSpeed(motorD, 0);
+        delay(250);
+    }
 }
+
+int main() {
+    long e1, e2;
+    while(true){
+        e1 = getMotorEncoder(motorA);
+        e2 = getMotorEncoder(motorD);
+
+        moveEnc(150);
+
+
+        displayTextLine(2,"encoderA=%d", e1/360);
+        displayTextLine(4,"encoderB=%d", e2/360);
+
+    }
+}
+
+
+/*
+long e1, e2;
+while(true){
+e1 = getMotorEncoder(motorA);
+e2 = getMotorEncoder(motorD);
+displayTextLine(2,"encoderA=%d", e1/360);
+displayTextLine(4,"encoderB=%d", e2/360);
+
+ setMotorSpeed(motorA, (17));
+        setMotorSpeed(motorD, 100);
+*/
