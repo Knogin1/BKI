@@ -1,0 +1,85 @@
+#include <rbc.h>
+#include <math.h>
+#define pi 3.14
+#define dkol 45
+#define drob 195
+#define mz 24
+#define bz 36
+
+//195
+
+float x1, r1, cor1 = 0;
+
+/*
+void move(float a){
+    setMotorSpeed(motorA, pw);
+    setMotorSpeed(motorD, pw);
+    delay(a*4);
+    setMotorSpeed(motorA, 0);
+    setMotorSpeed(motorD, 0);
+    delay(100);
+}
+*/
+
+void turn(float d) {
+    if (d >= 0) {
+        setMotorSpeed(motorA, -40);
+        setMotorSpeed(motorD, 40);
+        delay(10.45 * d);
+    }
+    else {
+        setMotorSpeed(motorA, 40);
+        setMotorSpeed(motorD, -40);
+        delay(10.45 * -d);
+    }
+}
+
+void moveEnc(int mm, int pw) {
+    float e1 = getMotorEncoder(motorA);
+    setMotorSpeed(motorA, pw);
+    setMotorSpeed(motorD, pw);
+    int a = (float) fabs((mm / (pi * dkol)) * 360);
+    displayTextLine(1, "A=%d", a);
+
+    while (((getMotorEncoder(motorA)) - e1) < (a - 50)) delay(5);
+    {
+        setMotorSpeed(motorA, 0);
+        setMotorSpeed(motorD, 0);
+        delay(100);
+    }
+}
+
+
+void turnEnc(int corn, int pw) {
+    float e1 = getMotorEncoder(motorA);
+    int a = corn * (bz / mz) * (drob / dkol);
+    displayTextLine(1, "A=%d", a);
+    setMotorSpeed(motorA, pw);
+    setMotorSpeed(motorD, -1*pw);
+
+    while (((getMotorEncoder(motorA)) - e1) < (a)) delay(5);{
+        setMotorSpeed(motorA, 0);
+        setMotorSpeed(motorD, 0);
+        delay(100);
+
+    }
+    }
+
+    void moveCord(float x2, float r2, int pw){
+        float a = x2 - x1;
+        float b = r2 - r1;
+        float way = sqrt(a * a + b * b);
+        //(atan2f(a, b)
+        float cor2 = ((atan2f(a, b) * 180) / 3.14) - cor1;
+        turn(cor2);
+        moveEnc(way, pw);
+        x1 = a;
+        r1 = b;
+        cor1 = cor2;
+    }
+
+
+int main() {
+    turnEnc(90,20);
+
+   }
