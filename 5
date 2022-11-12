@@ -90,7 +90,8 @@ void turnEnc(int corn, int pw) {
         setMotorSpeed(motorD, 5*sgn(corn));
     }
                                            //e1+
-    while ((fabs(getMotorEncoder(motorA))) < e2) delay(5);{
+    while ((fabs(getMotorEncoder(motorA))) < e2) delay(5);
+    {
 
         setMotorSpeed(motorA, 0);
         setMotorSpeed(motorD, 0);
@@ -114,6 +115,7 @@ void moveCord(float x2, float r2, int pw){
 
 
 task main() {
+
 /*
     while (true){
         setMotorSpeed(motorD,50);
@@ -128,20 +130,39 @@ task main() {
         }
     }
 */
-    int wide = getUSDistance('4');
-    turnEnc(-90,50);
-    int h = getUSDistance('4');
-    turnEnc(90,50);
-    for(int j=0; j<3; j++){
-        moveEnc(h*2,50);
-        int h = getUSDistance('4');
-        for(int i=0; i<3; i++){
-            moveEnc(10+wide/4,50);
-            turnEnc(-90,50);
-            if(getUSDistance('4')>80){
-                continue;
+
+
+
+    int A[3];
+    int h;
+
+    for (int s = 0; s < 3; s++) {
+        for (int q = 0; q < 3; q++) {
+            turnEnc(-90, 50);
+            h = getUSDistance('4');
+            if (h < 60) {
+                turnEnc(90, 50);
+                moveEnc(310, 50);
+                if (q == 2) {
+                    turnEnc(-90, 50);
+                    A[s] = 3;
+                    break;
+                }
+            } else {
+                A[s] = q;
+                break;
             }
-            turnEnc(90,50);
+
+
         }
+        moveEnc(580, 50);
+        turnEnc(-90, 50);
+        moveEnc(300 * A[s], 50);
+        turnEnc(180, 50);
+
     }
+
+
+    turn(180, 50);
+    moveEnc(580,50);
 }
