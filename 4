@@ -1,104 +1,20 @@
 #include <rbc.h>
-#include <math.h>
-#define pi 3.14
-#define dkol 45
-#define drob 195
-#define mz 24
-#define bz 36
 
-//195
+float HighLeft = 58;
+float HighRight = 58;
+float LowLeft = 6;
+float LowRight = 5;
+float Kprop = 1;
 
-float x1, r1, cor1 = 0;
+float difSensValue;//разница отклонений значений датчиков от минимального значени
 
-/*
-void move(float a){
-    setMotorSpeed(motorA, pw);
-    setMotorSpeed(motorD, pw);
-    delay(a*4);
-    setMotorSpeed(motorA, 0);
-    setMotorSpeed(motorD, 0);
-    delay(100);
-}
-*/
+int pw = 50; //мощность двигателей(«путевая мощность»)
 
-void turn(float d) {
-    if (d >= 0) {
-        setMotorSpeed(motorA, -40);
-        setMotorSpeed(motorD, 40);
-        delay(10.45 * d);
+task main(){
+    while(true){
+        difSensValue=(getColorReflected(S3)-LowLeft)-(getColorReflected(S2)-LowRight);
+	    setMotorSpeed(motorD, pw + difSensValue*Kprop);
+    	setMotorSpeed(motorA, pw - difSensValue*Kprop);
+	    delay(100);	//время реакции необходимое на изменение положения системы
     }
-    else {
-        setMotorSpeed(motorA, 40);
-        setMotorSpeed(motorD, -40);
-        delay(10.45 * -d);
-    }
-}
-
-void moveEnc(int mm, int pw) {
-    float e1 = getMotorEncoder(motorA);
-    setMotorSpeed(motorA, pw);
-    setMotorSpeed(motorD, pw);
-    int a = (float) fabs((mm / (pi * dkol)) * 360);
-    displayTextLine(1, "A=%d", a);
-
-    while (((getMotorEncoder(motorA)) - e1) < (a - 50)) delay(5);
-    {
-        setMotorSpeed(motorA, 0);
-        setMotorSpeed(motorD, 0);
-        delay(100);
-    }
-}
-
-
-void turnEnc(int corn, int pw) {
-    float e1 = fabs(getMotorEncoder(motorA));
-    int a = fabs(corn) * (bz / mz) * (drob / dkol);
-    //int a = ((fabs(corn) /(pi*45)*600)-80);
-
-    //resetMotorEncoder(motorA);
-
-    float e2 = e1+a*1.1;
-
-
-    displayTextLine(1, "A=%d", a);
-    displayTextLine(3, "B=%d", getMotorEncoder(motorA)/360);
-    //delay(1000000);
-    setMotorSpeed(motorA, -1*pw*sgn(corn));
-    setMotorSpeed(motorD, pw*sgn(corn));
-                                           //e1+
-    while (((fabs(getMotorEncoder(motorA)))) < e2) delay(5);{
-        setMotorSpeed(motorA, 0);
-        setMotorSpeed(motorD, 0);
-        delay(100);
-        resetMotorEncoder(motorA);
-    }
-}
-
-void moveCord(float x2, float r2, int pw){
-    float a = x2 - x1;
-    float b = r2 - r1;
-    float way = sqrt(a * a + b * b);
-    //(atan2f(a, b)
-    float cor2 = ((atan2f(a, b) * 180) / 3.14) - cor1;
-    turnEnc(cor2, pw);
-    moveEnc(way, pw);
-    x1 = a;
-    r1 = b;
-    cor1 = cor2;
-}
-
-
-int main() {
-
-    //moveCord(-100,0,50);
-   // moveCord(0,0,50);
-
-
-    moveCord(500,500,50);
-    moveCord(-500,500,50);
-    moveCord(-500,-500,50);
-    moveCord(500,-500,50);
-    moveCord(0,0,50);
-
-    //moveEnc(470,50);
 }
