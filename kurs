@@ -1,0 +1,75 @@
+#include <rbc.h>
+#include <math.h>
+#define pi 3.14
+#define dkol 45
+#define drob 195
+#define mz 24
+#define bz 36
+
+void moveEnc(int mm, int pw) {
+    float e1 = fabs(getMotorEncoder(motorA));
+
+    setMotorSpeed(motorA, sgn(mm)*pw);
+    setMotorSpeed(motorD, sgn(mm)*pw);
+
+    int a = (float) fabs((mm / (pi * dkol)) * 360);
+
+    while ((fabs(getMotorEncoder(motorA)) - e1) < (a - 50)) delay(5);{
+        setMotorSpeed(motorA, sgn(mm)*5);
+        setMotorSpeed(motorD, sgn(mm)*5);
+    }
+    while ((fabs(getMotorEncoder(motorA)) - e1) < (a)) delay(5);{
+        setMotorSpeed(motorA, 0);
+        setMotorSpeed(motorD, 0);
+        delay(100);
+    }
+}
+
+void turnEnc(int corn, int pw) {
+    int a = fabs(corn) * (bz / mz) * (drob / dkol);
+    resetMotorEncoder(motorA);
+    setMotorSpeed(motorA, -5*sgn(corn));
+    setMotorSpeed(motorD, 5*sgn(corn));
+    delay(200);
+
+    float e2 = a*1.1;
+
+    setMotorSpeed(motorA, -1*pw*sgn(corn));
+    setMotorSpeed(motorD, pw*sgn(corn));
+
+    while ((fabs(getMotorEncoder(motorA))) < e2-50) delay(5);{
+        setMotorSpeed(motorA, -5*sgn(corn));
+        setMotorSpeed(motorD, 5*sgn(corn));
+    }
+    while ((fabs(getMotorEncoder(motorA))) < e2) delay(5);{
+
+        setMotorSpeed(motorA, 0);
+        setMotorSpeed(motorD, 0);
+        delay(100);
+    }
+}
+
+void inf_move(pw){
+    setMotorSpeed(motorA,pw);
+    setMotorSpeed(motorD,pw);
+}
+
+void stop_move(){
+    setMotorSpeed(motorA,0);
+    setMotorSpeed(motorD,0);
+}
+//t1, motorA = right
+//t4, motorD = left
+
+//12 raz po 204mm
+task main() {
+    for(int s = 12; s>0; s--){
+        displayTextLine(2,"%d", s);
+        inf_move(50);
+        while ((getTouchValue('1') == 0) && (getTouchValue('4') == 0)) {
+            //inf_move(50);
+        }
+        moveEnc(-50,50);
+        delay(300);
+    }
+}
