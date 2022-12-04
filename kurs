@@ -7,18 +7,21 @@
 #define bz 36
 
 void moveEnc(int mm, int pw) {
-    float e1 = fabs(getMotorEncoder(motorA));
+    float e1 = getMotorEncoder(motorA);
 
-    setMotorSpeed(motorA, sgn(mm)*pw);
-    setMotorSpeed(motorD, sgn(mm)*pw);
+    setMotorSpeed(motorA, 5);
+    setMotorSpeed(motorD, 5);
+    delay(200);
 
+    setMotorSpeed(motorA, pw);
+    setMotorSpeed(motorD, pw);
     int a = (float) fabs((mm / (pi * dkol)) * 360);
 
-    while ((fabs(getMotorEncoder(motorA)) - e1) < (a - 50)) delay(5);{
-        setMotorSpeed(motorA, sgn(mm)*5);
-        setMotorSpeed(motorD, sgn(mm)*5);
+    while (((getMotorEncoder(motorA)) - e1) < (a - 50)) delay(5);{
+        setMotorSpeed(motorA, 5);
+        setMotorSpeed(motorD, 5);
     }
-    while ((fabs(getMotorEncoder(motorA)) - e1) < (a)) delay(5);{
+    while (((getMotorEncoder(motorA)) - e1) < (a)) delay(5);{
         setMotorSpeed(motorA, 0);
         setMotorSpeed(motorD, 0);
         delay(100);
