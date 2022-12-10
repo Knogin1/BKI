@@ -6,6 +6,7 @@
 #define mz 24
 #define bz 36
 
+/*
 void moveEnc(int mm, int pw) {
     float e1 = getMotorEncoder(motorA);
 
@@ -51,6 +52,62 @@ void turnEnc(int corn, int pw) {
         delay(100);
     }
 }
+*/
+
+ void moveEnc (int mm, int pw){
+    resetMotorEncoder(motorA);
+    resetMotorEncoder(motorD);
+
+    setMotorSpeed(motorA, 5*sgn(mm));
+    setMotorSpeed(motorD, 5*sgn(mm));
+    delay(200);
+
+    long dAlfa;
+
+    setMotorSpeed(motorA, pw*sgn(mm));
+    setMotorSpeed(motorD, pw*sgn(mm));
+
+    dAlfa = (long) ((fabs(mm) /(pi*45))*360); //угол поворота колеса для перемещения Lmm
+
+    while (fabs(getMotorEncoder(motorA)) < dAlfa){
+        delay(5);
+    }
+
+    setMotorSpeed(motorA, 5*sgn(mm));
+    setMotorSpeed(motorD, 5*sgn(mm));
+
+    while( fabs(getMotorEncoder(motorA)) < dAlfa) delay(5);{ // ожидание события
+        setMotorSpeed(motorA, 0);
+        setMotorSpeed(motorD, 0);
+        delay(250);
+    }
+}
+
+void turnEnc (int Alf, int pw){
+    resetMotorEncoder(motorA);
+    resetMotorEncoder(motorD);
+
+    setMotorSpeed(motorA, 5*sgn(Alf));
+    setMotorSpeed(motorD, -5*sgn(Alf));
+    delay(100);
+
+    long encA = getMotorEncoder(motorA);
+
+    setMotorSpeed(motorA, pw*sgn(Alf));
+    setMotorSpeed(motorD, -pw*sgn(Alf));
+
+    while (fabs(getMotorEncoder(motorA)) < fabs(Alf*4.23)-75) delay(1);{
+        setMotorSpeed(motorA, 5 * sgn(Alf));
+        setMotorSpeed(motorD, -5 * sgn(Alf));
+    }
+
+    while (fabs(getMotorEncoder(motorA)) < fabs(Alf*4.23)) delay(1);{
+        setMotorSpeed(motorA, 0);
+        setMotorSpeed(motorD, 0);
+        delay(250);
+    }
+}
+
 
 void inf_move(pw){
     setMotorSpeed(motorA,pw);
@@ -66,6 +123,10 @@ void stop_move(){
 
 //12 raz po 204mm
 task main() {
+     moveEnc(100,50);
+     moveEnc(-100,50)
+
+
     for(int s = 12; s>0; s--){
         displayTextLine(2,"%d", s);
         inf_move(50);
