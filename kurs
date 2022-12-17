@@ -67,33 +67,58 @@ void inf_move(pw){
     setMotorSpeed(motorA,pw);
     setMotorSpeed(motorD,pw);
 }
+
+void detour(){
+    stop_move();
+    moveEnc(-100,50);
+    turnEnc(-90,50);
+    inf_move(50);
+}
 //t1, motorA, - = right
 //t4, motorD, + = left
 
 task main() {
-    int a, o;
+    int a, o, c, count;
     for(int s = 10; s>0; s--){
         resetMotorEncoder(motorA);
-        resetMotorEncoder(motorD);
         a = 0;
         o = 0;
+        c = 0;
+        count = 0;
 
-        inf_move(70);
+        inf_move(50);
 
-        while (a<=2500){
+        while (a+o<=2400){
             while ((getTouchValue('1')==0)&&(getTouchValue('4')==0)) {
-                a = fabs(getMotorEncoder(motorA)-o);
+                a = getMotorEncoder(motorA);
+
             }
-            moveEnc(-300, 50);
-            turnEnc(-90, 50);
-            moveEnc(300,50);
-            turnEnc(90, 50);
-            moveEnc(600,50);
-            turnEnc(90,50);
-            moveEnc(600,50);
-            turnEnc(-90,50);
-            o = getMotorEncoder(motorA);
+            o = a;
+            while (true) {
+                count++;
+                moveEnc(-100, 50);//back
+                turnEnc(-90, 50);//right
+                moveEnc(300, 50);//move right
+                turnEnc(90, 50);//left
+                resetMotorEncoder(motorA);
+                moveEnc(110, 50);//move left
+
+                if ((getTouchValue('1') == 0) && (getTouchValue('4') == 0)) {
+                    moveEnc(380, 50);
+                    o += getMotorEncoder(motorA);
+                    resetMotorEncoder(motorA);
+                    turnEnc(90, 50);
+                    moveEnc(count * 300, 50);
+                    turnEnc(-90, 50);
+                    resetMotorEncoder(motorA);
+                    break;
+                }
+
+            }
+                    displayTextLine(2, "%d , %d , %d", a,o,c);
+                    inf_move(50);
         }
+
 
         stop_move();
         moveEnc(-50,50);
@@ -105,7 +130,7 @@ task main() {
         }
         else{
             turnEnc(90,50);
-            moveEnc(240,50);
+            moveEnc(250,50);
             turnEnc(90,50);
         }
         moveEnc(-190,50);
