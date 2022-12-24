@@ -11,7 +11,7 @@ void stop_move() {
     setMotorSpeed(motorD, 0);
 }
 
- void moveEnc (int mm, int pw){
+void moveEnc (int mm, int pw){
     resetMotorEncoder(motorA);
     resetMotorEncoder(motorD);
 
@@ -79,44 +79,43 @@ void detour(){
 
 task main() {
     int a, o, c, count;
-    for(int s = 10; s>0; s--){
+    for(int s = 7; s>0; s--){
         resetMotorEncoder(motorA);
         a = 0;
         o = 0;
         c = 0;
         count = 0;
 
-        inf_move(50);
-
-        while (a+o<=2400){
-            while ((getTouchValue('1')==0)&&(getTouchValue('4')==0)) {
-                a = getMotorEncoder(motorA);
-
-            }
-            o = a;
-            while (true) {
-                count++;
-                moveEnc(-100, 50);//back
-                turnEnc(-90, 50);//right
-                moveEnc(300, 50);//move right
-                turnEnc(90, 50);//left
-                resetMotorEncoder(motorA);
-                moveEnc(110, 50);//move left
-
-                if ((getTouchValue('1') == 0) && (getTouchValue('4') == 0)) {
-                    moveEnc(380, 50);
-                    o += getMotorEncoder(motorA);
+        while (a+o<=2900) {
+            inf_move(50);
+            a = getMotorEncoder(motorA);
+            if ((a+o <2200) && (c==0) && ((getTouchValue('1') == 1) || (getTouchValue('4') == 1))) {
+                o = a;
+                c++;
+                while (true) {
+                    count++;
+                    moveEnc(-100, 50);//back
+                    turnEnc(-90, 50);//right
+                    moveEnc(300, 50);//move right
+                    turnEnc(90, 50);//left
                     resetMotorEncoder(motorA);
-                    turnEnc(90, 50);
-                    moveEnc(count * 300, 50);
-                    turnEnc(-90, 50);
-                    resetMotorEncoder(motorA);
-                    break;
+                    moveEnc(100, 50);//move left
+
+                    if ((getTouchValue('1') == 1) || (getTouchValue('4') == 1)) {
+                        continue;
+                    }
+                    else {
+                        moveEnc(520, 50);
+                        o += getMotorEncoder(motorA);
+                        turnEnc(90, 50);
+                        moveEnc(count * 300, 50);
+                        turnEnc(-90, 50);
+                        break;
+                    }
+
                 }
-
+                displayTextLine(2, "%d , %d", a, o);
             }
-                    displayTextLine(2, "%d , %d , %d", a,o,c);
-                    inf_move(50);
         }
 
 
@@ -125,12 +124,12 @@ task main() {
 
         if (s%2 == 0){
             turnEnc(-90,50);
-            moveEnc(250,50);
+            moveEnc(300,50);
             turnEnc(-90,50);
         }
         else{
             turnEnc(90,50);
-            moveEnc(250,50);
+            moveEnc(300,50);
             turnEnc(90,50);
         }
         moveEnc(-190,50);
